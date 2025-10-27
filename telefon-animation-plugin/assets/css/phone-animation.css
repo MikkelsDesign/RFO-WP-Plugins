@@ -1,0 +1,146 @@
+/* Phone Hover Animation Plugin Styles */
+
+.phone-animation-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.phone-container {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.phone-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 2;
+}
+
+.phone-wrapper:hover {
+    transform: translate(-50%, -50%) translateY(-53px);
+}
+
+.phone-link {
+    display: block;
+    text-decoration: none;
+}
+
+.phone-image {
+    width: 300px;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+    transition: filter 0.3s ease;
+}
+
+.phone-wrapper:hover .phone-image {
+    filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.3));
+}
+
+.text-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 160px;
+    z-index: 1;
+}
+
+.hidden-text {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    text-align: center;
+    width: 300px;
+    pointer-events: none;
+}
+
+.phone-wrapper:hover + .text-wrapper .hidden-text,
+.text-wrapper:has(~ .phone-wrapper:hover) .hidden-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hidden-text h3 {
+    color: #365786;
+    font-size: 24px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.hidden-text p {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .phone-container {
+        width: 300px;
+        height: 500px;
+    }
+    
+    .phone-image {
+        width: 220px;
+    }
+    
+    .text-wrapper {
+        margin-top: 130px;
+    }
+    
+    .hidden-text {
+        width: 250px;
+    }
+    
+    .hidden-text h3 {
+        font-size: 20px;
+    }
+    
+    .hidden-text p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .phone-container {
+        width: 250px;
+        height: 400px;
+    }
+    
+    .phone-image {
+        width: 180px;
+    }
+    
+    .text-wrapper {
+        margin-top: 110px;
+    }
+    
+    .hidden-text {
+        width: 200px;
+    }
+    
+    .hidden-text h3 {
+        font-size: 18px;
+    }
+    
+    .hidden-text p {
+        font-size: 13px;
+    }
+    
+    .phone-wrapper:hover {
+        transform: translate(-50%, -50%) translateY(-40px);
+    }
+}
