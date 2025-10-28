@@ -45,8 +45,8 @@ function phone_animation_shortcode($atts) {
     // Extract shortcode attributes with defaults
     $atts = shortcode_atts(array(
         'link' => '#',
-        'title' => 'Download Our App',
-        'subtitle' => 'Experience the future of mobile technology',
+        'title' => 'Capture Plastic Waste',
+        'subtitle' => '',
         'phone_image' => '',
     ), $atts, 'phone_animation');
     
