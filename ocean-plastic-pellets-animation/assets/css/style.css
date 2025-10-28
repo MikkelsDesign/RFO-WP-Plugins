@@ -12,7 +12,7 @@
 
 .ocean-plastic-container {
     width: 100%;
-    background: linear-gradient(to bottom, #f0f9ff, #dbeafe);
+    background: transparent;
     overflow: hidden;
     position: relative;
     min-height: 500px;
@@ -66,19 +66,18 @@
 .fact-box-wrapper {
     position: absolute;
     bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     z-index: 20;
     padding: 0 1rem;
     animation: fadeIn 1s ease-out forwards;
-    width: 100%;
-    max-width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .fact-box-inner {
     width: 100%;
     max-width: 20rem;
-    margin: 0 auto;
 }
 
 .fact-box {
@@ -116,11 +115,11 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+        transform: translateY(-20px);
     }
     to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
 }
 
@@ -157,16 +156,12 @@
 @media (min-width: 768px) {
     .fact-box-wrapper {
         bottom: 4rem;
-        left: auto;
-        right: 2rem;
-        transform: none;
-        padding: 0;
-        max-width: none;
+        justify-content: flex-end;
+        padding: 0 2rem;
     }
     
     .fact-box-inner {
         max-width: 48rem;
-        margin: 0;
     }
     
     .fact-box {
@@ -195,7 +190,7 @@
 
 @media (min-width: 1024px) {
     .fact-box-wrapper {
-        right: 4rem;
+        padding: 0 4rem;
     }
     
     .fact-box-inner {
@@ -219,7 +214,7 @@
 
 @media (min-width: 1280px) {
     .fact-box-wrapper {
-        right: 6rem;
+        padding: 0 6rem;
     }
     
     .fact-box-inner {
