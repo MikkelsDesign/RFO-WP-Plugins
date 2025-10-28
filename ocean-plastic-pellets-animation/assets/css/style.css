@@ -1,10 +1,21 @@
 /* Ocean Plastic Pellets Animation Styles */
 
+/* Wrapper to break out of Elementor constraints */
+.ocean-plastic-wrapper {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
 .ocean-plastic-container {
     width: 100%;
     background: linear-gradient(to bottom, #f0f9ff, #dbeafe);
     overflow: hidden;
     position: relative;
+    min-height: 500px;
 }
 
 .ocean-plastic-animation {
@@ -60,11 +71,14 @@
     z-index: 20;
     padding: 0 1rem;
     animation: fadeIn 1s ease-out forwards;
+    width: 100%;
+    max-width: 100%;
 }
 
 .fact-box-inner {
     width: 100%;
     max-width: 20rem;
+    margin: 0 auto;
 }
 
 .fact-box {
@@ -79,6 +93,7 @@
     font-weight: 700;
     color: #2b3869;
     margin-bottom: 0.75rem;
+    margin-top: 0;
     line-height: 1.2;
 }
 
@@ -88,6 +103,7 @@
     color: #334155;
     line-height: 1.6;
     margin-bottom: 0.75rem;
+    margin-top: 0;
 }
 
 .fact-box-source {
@@ -145,10 +161,12 @@
         right: 2rem;
         transform: none;
         padding: 0;
+        max-width: none;
     }
     
     .fact-box-inner {
         max-width: 48rem;
+        margin: 0;
     }
     
     .fact-box {
@@ -219,4 +237,14 @@
     .fact-box-text {
         font-size: 1.5rem;
     }
+}
+
+/* Elementor compatibility fixes */
+.elementor-widget-shortcode .ocean-plastic-wrapper {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.elementor-element .ocean-plastic-wrapper {
+    overflow: visible;
 }

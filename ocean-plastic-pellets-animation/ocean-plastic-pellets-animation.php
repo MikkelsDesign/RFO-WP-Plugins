@@ -74,33 +74,35 @@ class OceanPlasticPelletsAnimation {
         
         ob_start();
         ?>
-        <div class="ocean-plastic-container" style="height: <?php echo esc_attr($atts['height']); ?>;">
-            <div class="ocean-plastic-animation" id="oceanPlasticAnimation">
-                <!-- Ocean Wave SVG -->
-                <svg class="ocean-wave" viewBox="0 0 1000 400" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style="stop-color: #7dd3e8; stop-opacity: 0.8;" />
-                            <stop offset="100%" style="stop-color: #4a9ab8; stop-opacity: 0.9;" />
-                        </linearGradient>
-                    </defs>
-                    <path class="wave-path" fill="url(#oceanGradient)" d="M0,150 Q250,120 500,150 T1000,150 L1000,400 L0,400 Z" />
-                </svg>
-                
-                <!-- Pellets Container -->
-                <div class="pellets-container" id="pelletsContainer"></div>
-                
-                <!-- Fact Box -->
-                <div class="fact-box-wrapper">
-                    <div class="fact-box-inner">
-                        <div class="fact-box">
-                            <h3 class="fact-box-title">The Pellet Problem</h3>
-                            <p class="fact-box-text">
-                                Between 52,000 and 184,000 tonnes of plastic pellets are released into the environment each year due to mishandling throughout the entire supply chain.
-                            </p>
-                            <p class="fact-box-source">
-                                Source: EU Commission, October 2023
-                            </p>
+        <div class="ocean-plastic-wrapper">
+            <div class="ocean-plastic-container" style="height: <?php echo esc_attr($atts['height']); ?>;">
+                <div class="ocean-plastic-animation" id="oceanPlasticAnimation">
+                    <!-- Ocean Wave SVG -->
+                    <svg class="ocean-wave" viewBox="0 0 1000 400" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color: #7dd3e8; stop-opacity: 0.8;" />
+                                <stop offset="100%" style="stop-color: #4a9ab8; stop-opacity: 0.9;" />
+                            </linearGradient>
+                        </defs>
+                        <path class="wave-path" fill="url(#oceanGradient)" d="M0,150 Q250,120 500,150 T1000,150 L1000,400 L0,400 Z" />
+                    </svg>
+                    
+                    <!-- Pellets Container -->
+                    <div class="pellets-container" id="pelletsContainer"></div>
+                    
+                    <!-- Fact Box -->
+                    <div class="fact-box-wrapper">
+                        <div class="fact-box-inner">
+                            <div class="fact-box">
+                                <h3 class="fact-box-title">The Pellet Problem</h3>
+                                <p class="fact-box-text">
+                                    Between 52,000 and 184,000 tonnes of plastic pellets are released into the environment each year due to mishandling throughout the entire supply chain.
+                                </p>
+                                <p class="fact-box-source">
+                                    Source: EU Commission, October 2023
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
