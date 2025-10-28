@@ -10,8 +10,19 @@
             return;
         }
         
-        // Color palette
-        const pelletColors = ['#fdfbfd', '#ebe0cc', '#b3d1d6', '#98c6e2', '#2b3869'];
+        // Plastic-looking color palette - more vibrant and varied
+        const pelletColors = [
+            '#FF6B6B', // Bright red plastic
+            '#4ECDC4', // Turquoise plastic
+            '#FFE66D', // Yellow plastic
+            '#95E1D3', // Mint green plastic
+            '#F38181', // Coral plastic
+            '#AA96DA', // Purple plastic
+            '#FCBAD3', // Pink plastic
+            '#A8E6CF', // Light green plastic
+            '#FFD93D', // Golden yellow plastic
+            '#6BCF7F'  // Bright green plastic
+        ];
         
         // Pellets array
         let pellets = [];
