@@ -32,7 +32,7 @@
         
         // Initialize pellets
         function initPellets() {
-            const numPellets = 30;
+            const numPellets = 80;
             
             for (let i = 0; i < numPellets; i++) {
                 const pellet = {
