@@ -1,0 +1,222 @@
+/* Ocean Plastic Pellets Animation Styles */
+
+.ocean-plastic-container {
+    width: 100%;
+    background: linear-gradient(to bottom, #f0f9ff, #dbeafe);
+    overflow: hidden;
+    position: relative;
+}
+
+.ocean-plastic-animation {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Ocean Wave */
+.ocean-wave {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.wave-path {
+    animation: wave 6s ease-in-out infinite;
+}
+
+@keyframes wave {
+    0%, 100% { 
+        d: path("M0,150 Q250,120 500,150 T1000,150 L1000,400 L0,400 Z"); 
+    }
+    50% { 
+        d: path("M0,150 Q250,180 500,150 T1000,150 L1000,400 L0,400 Z"); 
+    }
+}
+
+/* Pellets */
+.pellets-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.pellet {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.5;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease-out, top 0.3s ease-out;
+    will-change: left, top;
+}
+
+/* Fact Box */
+.fact-box-wrapper {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    padding: 0 1rem;
+    animation: fadeIn 1s ease-out forwards;
+}
+
+.fact-box-inner {
+    width: 100%;
+    max-width: 20rem;
+}
+
+.fact-box {
+    background: white;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.fact-box-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2b3869;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+}
+
+.fact-box-text {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.875rem;
+    color: #334155;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.fact-box-source {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Responsive Styles */
+@media (min-width: 640px) {
+    .fact-box-wrapper {
+        bottom: 2rem;
+        padding: 0 1.5rem;
+    }
+    
+    .fact-box-inner {
+        max-width: 28rem;
+    }
+    
+    .fact-box {
+        padding: 2rem;
+    }
+    
+    .fact-box-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .fact-box-text {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .fact-box-source {
+        font-size: 0.875rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .fact-box-wrapper {
+        bottom: 4rem;
+        left: auto;
+        right: 2rem;
+        transform: none;
+        padding: 0;
+    }
+    
+    .fact-box-inner {
+        max-width: 48rem;
+    }
+    
+    .fact-box {
+        padding: 3rem;
+    }
+    
+    .fact-box-title {
+        font-size: 1.875rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .fact-box-text {
+        font-size: 1.125rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .fact-box-source {
+        font-size: 1rem;
+    }
+    
+    .pellet {
+        width: 8px !important;
+        height: 8px !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .fact-box-wrapper {
+        right: 4rem;
+    }
+    
+    .fact-box-inner {
+        max-width: 56rem;
+    }
+    
+    .fact-box {
+        padding: 3.5rem;
+    }
+    
+    .fact-box-title {
+        font-size: 2.25rem;
+        margin-bottom: 2rem;
+    }
+    
+    .fact-box-text {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .fact-box-wrapper {
+        right: 6rem;
+    }
+    
+    .fact-box-inner {
+        max-width: 64rem;
+    }
+    
+    .fact-box {
+        padding: 4rem;
+    }
+    
+    .fact-box-title {
+        font-size: 3rem;
+    }
+    
+    .fact-box-text {
+        font-size: 1.5rem;
+    }
+}
