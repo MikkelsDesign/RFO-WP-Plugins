@@ -43,7 +43,7 @@ class ImageHoverReveal {
     
     public function shortcode($atts) {
         $atts = shortcode_atts(array(
-            'photo' => 'Frame-806-950x594.jpeg',
+            'photo' => 'Frame-806-950x594.jpg',
             'illustration' => 'Plasticpellets.png',
             'width' => '100%',
             'max_width' => '950px',
