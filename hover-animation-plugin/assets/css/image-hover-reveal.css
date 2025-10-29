@@ -6,6 +6,7 @@
     aspect-ratio: 1.599;
     cursor: pointer;
     overflow: hidden;
+    background-color: #f0f0f0;
 }
 
 .photo-base {
@@ -49,15 +50,26 @@
     display: block;
 }
 
+/* Loading state */
+.image-hover-container img {
+    transition: opacity 0.3s ease;
+}
+
+.image-hover-container img:not([src]) {
+    opacity: 0;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .image-hover-container {
         max-width: 100%;
+        cursor: default;
     }
 }
 
 @media (max-width: 480px) {
     .image-hover-container {
         max-width: 100%;
+        cursor: default;
     }
 }

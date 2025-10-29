@@ -4,47 +4,60 @@ window.ImageHoverReveal = (function() {
     var instances = {};
     
     function init(containerId) {
-        if (instances[containerId]) {
-            return; // Already initialized
+        // Retry mechanism for containers that aren't ready yet
+        var retryCount = 0;
+        var maxRetries = 50;
+        
+        function attemptInit() {
+            if (instances[containerId]) {
+                return; // Already initialized
+            }
+            
+            var container = document.getElementById(containerId);
+            if (!container) {
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    setTimeout(attemptInit, 100);
+                    return;
+                }
+                console.warn('ImageHoverReveal: Container not found after retries:', containerId);
+                return;
+            }
+            
+            var overlay = container.querySelector('.illustration-overlay');
+            if (!overlay) {
+                console.warn('ImageHoverReveal: Illustration overlay not found in container:', containerId);
+                return;
+            }
+            
+            var instance = {
+                container: container,
+                overlay: overlay,
+                mouseX: 50,
+                mouseY: 50,
+                currentRadius: 0,
+                targetRadius: 0,
+                hovering: false,
+                animationFrame: null
+            };
+            
+            // Event listeners
+            container.addEventListener('mousemove', function(e) {
+                handleMouseMove(instance, e);
+            });
+            
+            container.addEventListener('mouseenter', function(e) {
+                handleMouseEnter(instance, e);
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                handleMouseLeave(instance);
+            });
+            
+            instances[containerId] = instance;
         }
         
-        var container = document.getElementById(containerId);
-        if (!container) {
-            console.warn('ImageHoverReveal: Container not found:', containerId);
-            return;
-        }
-        
-        var overlay = container.querySelector('.illustration-overlay');
-        if (!overlay) {
-            console.warn('ImageHoverReveal: Illustration overlay not found in container:', containerId);
-            return;
-        }
-        
-        var instance = {
-            container: container,
-            overlay: overlay,
-            mouseX: 50,
-            mouseY: 50,
-            currentRadius: 0,
-            targetRadius: 0,
-            hovering: false,
-            animationFrame: null
-        };
-        
-        // Event listeners
-        container.addEventListener('mousemove', function(e) {
-            handleMouseMove(instance, e);
-        });
-        
-        container.addEventListener('mouseenter', function(e) {
-            handleMouseEnter(instance, e);
-        });
-        
-        container.addEventListener('mouseleave', function() {
-            handleMouseLeave(instance);
-        });
-        
-        instances[containerId] = instance;
+        attemptInit();
     }
     
     function handleMouseMove(instance, e) {
@@ -53,7 +66,7 @@ window.ImageHoverReveal = (function() {
         instance.mouseY = ((e.clientY - rect.top) / rect.height) * 100;
         
         if (instance.hovering) {
-            instance.overlay.style.clipPath = 'circle(' + instance.currentRadius + '% at ' + instance.mouseX + '% ' + instance.mouseY + '%)';
+            updateClipPath(instance);
         }
     }
     
@@ -71,12 +84,16 @@ window.ImageHoverReveal = (function() {
         instance.targetRadius = 0;
     }
     
+    function updateClipPath(instance) {
+        instance.overlay.style.clipPath = 'circle(' + instance.currentRadius + '% at ' + instance.mouseX + '% ' + instance.mouseY + '%)';
+    }
+    
     function animate(instance) {
         // Ultra-slow, buttery smooth easing
         var ease = instance.hovering ? 0.01 : 0.015;
         instance.currentRadius += (instance.targetRadius - instance.currentRadius) * ease;
         
-        instance.overlay.style.clipPath = 'circle(' + instance.currentRadius + '% at ' + instance.mouseX + '% ' + instance.mouseY + '%)';
+        updateClipPath(instance);
         
         if (instance.hovering || instance.currentRadius > 0.3) {
             instance.animationFrame = requestAnimationFrame(function() {
@@ -84,7 +101,7 @@ window.ImageHoverReveal = (function() {
             });
         } else {
             instance.currentRadius = 0;
-            instance.overlay.style.clipPath = 'circle(0% at ' + instance.mouseX + '% ' + instance.mouseY + '%)';
+            updateClipPath(instance);
             if (instance.animationFrame) {
                 cancelAnimationFrame(instance.animationFrame);
                 instance.animationFrame = null;
@@ -117,9 +134,17 @@ window.ImageHoverReveal = (function() {
 })();
 
 // Auto-initialize any containers found on page load
-document.addEventListener('DOMContentLoaded', function() {
-    var containers = document.querySelectorAll('.image-hover-container[id]');
-    containers.forEach(function(container) {
-        ImageHoverReveal.init(container.id);
-    });
-});
+(function() {
+    function autoInit() {
+        var containers = document.querySelectorAll('.image-hover-container[id]');
+        containers.forEach(function(container) {
+            ImageHoverReveal.init(container.id);
+        });
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', autoInit);
+    } else {
+        autoInit();
+    }
+})();

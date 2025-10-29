@@ -43,15 +43,15 @@ class ImageHoverReveal {
     
     public function shortcode($atts) {
         $atts = shortcode_atts(array(
-            'photo' => 'Frame-806-950x594.jpg',
-            'illustration' => 'Plasticpellets.png',
+            'photo' => 'photo.jpg',
+            'illustration' => 'illustration.png',
             'width' => '100%',
             'max_width' => '950px',
             'id' => ''
         ), $atts);
         
-        $photo_url = $this->plugin_url . 'assets/images/Frame-806-950x594.jpg' . $atts['photo'];
-        $illustration_url = $this->plugin_url . 'assets/images/Plasticpellets.png' . $atts['illustration'];
+        $photo_url = $this->plugin_url . 'assets/images/' . $atts['photo'];
+        $illustration_url = $this->plugin_url . 'assets/images/' . $atts['illustration'];
         
         $unique_id = !empty($atts['id']) ? $atts['id'] : 'hover-reveal-' . uniqid();
         
@@ -61,20 +61,34 @@ class ImageHoverReveal {
              id="<?php echo esc_attr($unique_id); ?>"
              style="width: <?php echo esc_attr($atts['width']); ?>; max-width: <?php echo esc_attr($atts['max_width']); ?>;">
             <div class="photo-base">
-                <img src="<?php echo esc_url($photo_url); ?>" alt="Photography">
+                <img src="<?php echo esc_url($photo_url); ?>" 
+                     alt=""
+                     loading="lazy">
             </div>
             
             <div class="illustration-overlay">
-                <img src="<?php echo esc_url($illustration_url); ?>" alt="Illustration">
+                <img src="<?php echo esc_url($illustration_url); ?>" 
+                     alt=""
+                     loading="lazy">
             </div>
         </div>
         
         <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof ImageHoverReveal !== 'undefined') {
-                ImageHoverReveal.init('<?php echo esc_js($unique_id); ?>');
+        (function() {
+            function initHover() {
+                if (typeof ImageHoverReveal !== 'undefined') {
+                    ImageHoverReveal.init('<?php echo esc_js($unique_id); ?>');
+                } else {
+                    setTimeout(initHover, 100);
+                }
             }
-        });
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initHover);
+            } else {
+                initHover();
+            }
+        })();
         </script>
         <?php
         return ob_get_clean();
