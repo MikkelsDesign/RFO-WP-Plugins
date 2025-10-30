@@ -129,32 +129,32 @@
                 this.y = y;
                 this.data = data;
                 this.id = id;
-                this.vx = (Math.random() - 0.5) * 1.2;
-                this.vy = (Math.random() - 0.5) * 1.2;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
                 this.hovered = false;
                 this.isInteractive = data.category === "interactive";
                 this.layer = layer; // Depth layer for visual effect
                 this.orbitCenter = orbitCenter;
                 
-                // Much larger orbit radius with variation
-                this.orbitRadius = this.isInteractive ? 
-                    280 + Math.random() * 80 : 
-                    150 + Math.random() * 300;
+                // Calculate orbit radius based on distance from center (stays within bounds)
+                const dx = x - orbitCenter.x;
+                const dy = y - orbitCenter.y;
+                this.orbitRadius = Math.sqrt(dx * dx + dy * dy);
                 
                 this.orbitAngle = Math.atan2(y - orbitCenter.y, x - orbitCenter.x);
                 // More varied and visible orbit speeds
-                this.orbitSpeed = (Math.random() - 0.5) * 0.003 + (this.isInteractive ? 0.001 : 0.0005);
+                this.orbitSpeed = (Math.random() - 0.5) * 0.0015 + (this.isInteractive ? 0.0008 : 0.0004);
                 
-                // Add some wobble for organic movement
+                // Add some wobble for organic movement (reduced)
                 this.wobbleOffset = Math.random() * Math.PI * 2;
-                this.wobbleSpeed = 0.001 + Math.random() * 0.002;
-                this.wobbleAmount = 15 + Math.random() * 25;
+                this.wobbleSpeed = 0.0008 + Math.random() * 0.001;
+                this.wobbleAmount = 8 + Math.random() * 12;
                 
                 this.connected = [];
                 
-                // Add magnetic attraction properties
-                this.attractionStrength = 0.00015;
-                this.repulsionStrength = 0.5;
+                // Add magnetic attraction properties (reduced)
+                this.attractionStrength = 0.0001;
+                this.repulsionStrength = 0.3;
                 this.minDistance = 60;
             }
 
@@ -203,17 +203,30 @@
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Soft boundary bounce
+                // Get actual canvas dimensions
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const width = rect.width;
+                const height = rect.height;
+                
+                // Strong boundary containment - prevent going off screen
                 const margin = 50;
+                
+                // Hard clamp to keep nodes visible
                 if (this.x < margin) {
-                    this.vx += (margin - this.x) * 0.05;
-                } else if (this.x > canvas.width - margin) {
-                    this.vx -= (this.x - (canvas.width - margin)) * 0.05;
+                    this.x = margin;
+                    this.vx = Math.abs(this.vx) * 0.5;
+                }
+                if (this.x > width - margin) {
+                    this.x = width - margin;
+                    this.vx = -Math.abs(this.vx) * 0.5;
                 }
                 if (this.y < margin) {
-                    this.vy += (margin - this.y) * 0.05;
-                } else if (this.y > canvas.height - margin) {
-                    this.vy -= (this.y - (canvas.height - margin)) * 0.05;
+                    this.y = margin;
+                    this.vy = Math.abs(this.vy) * 0.5;
+                }
+                if (this.y > height - margin) {
+                    this.y = height - margin;
+                    this.vy = -Math.abs(this.vy) * 0.5;
                 }
             }
 
@@ -312,18 +325,22 @@
 
         // Create node array
         const nodes = [];
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        const rect = container.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
         const orbitCenter = { x: centerX, y: centerY };
+        
+        // Calculate safe radius based on viewport size
+        const maxRadius = Math.min(rect.width, rect.height) * 0.35;
 
         // Create interactive data nodes in multiple layers with better spacing
         dataPoints.forEach((data, index) => {
             const angle = (index / dataPoints.length) * Math.PI * 2;
             // Layer assignment (0, 1, or 2) for depth
             const layer = index % 3;
-            // Varied radius based on layer
-            const baseRadius = 280 + (layer * 40);
-            const radiusVariation = (Math.random() - 0.5) * 60;
+            // Constrain radius to safe viewport area
+            const baseRadius = maxRadius * 0.7 + (layer * maxRadius * 0.1);
+            const radiusVariation = (Math.random() - 0.5) * maxRadius * 0.15;
             const radius = baseRadius + radiusVariation;
             
             const x = centerX + Math.cos(angle) * radius;
@@ -336,8 +353,8 @@
         helperNodes.forEach((data, index) => {
             const angle = Math.random() * Math.PI * 2;
             const layer = Math.floor(Math.random() * 3);
-            // More varied radius for depth
-            const radius = 150 + Math.random() * 350;
+            // More varied radius for depth but constrained to viewport
+            const radius = maxRadius * 0.3 + Math.random() * maxRadius * 0.7;
             const x = centerX + Math.cos(angle) * radius;
             const y = centerY + Math.sin(angle) * radius;
             
@@ -557,8 +574,7 @@
 
         // Canvas responsiveness
         window.addEventListener('resize', () => {
-            const oldWidth = canvas.width;
-            const oldHeight = canvas.height;
+            const oldRect = { width: canvas.width / (window.devicePixelRatio || 1), height: canvas.height / (window.devicePixelRatio || 1) };
             
             resizeCanvas();
             
@@ -568,13 +584,21 @@
             const newCenterY = rect.height / 2;
             
             // Scale node positions proportionally
-            const scaleX = rect.width / (oldWidth / (window.devicePixelRatio || 1));
-            const scaleY = rect.height / (oldHeight / (window.devicePixelRatio || 1));
+            const scaleX = rect.width / oldRect.width;
+            const scaleY = rect.height / oldRect.height;
+            const scale = Math.min(scaleX, scaleY); // Use minimum to prevent overflow
             
             nodes.forEach(node => {
-                node.x *= scaleX;
-                node.y *= scaleY;
+                // Scale position relative to old center
+                const oldCenterX = oldRect.width / 2;
+                const oldCenterY = oldRect.height / 2;
+                const relX = (node.x - oldCenterX) * scale;
+                const relY = (node.y - oldCenterY) * scale;
+                
+                node.x = newCenterX + relX;
+                node.y = newCenterY + relY;
                 node.orbitCenter = { x: newCenterX, y: newCenterY };
+                node.orbitRadius = Math.sqrt(relX * relX + relY * relY);
             });
             
             buildConnections();
