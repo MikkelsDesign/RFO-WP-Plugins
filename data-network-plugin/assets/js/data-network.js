@@ -23,8 +23,20 @@
         
         // Set canvas size
         function resizeCanvas() {
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
+            // Get device pixel ratio for high DPI displays
+            const dpr = window.devicePixelRatio || 1;
+            const rect = container.getBoundingClientRect();
+            
+            // Set display size (css pixels)
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            
+            // Set actual size in memory (scaled for DPI)
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            // Scale context to match DPI
+            ctx.scale(dpr, dpr);
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
@@ -112,58 +124,121 @@
 
         // Node class
         class Node {
-            constructor(x, y, data, id, orbitCenter) {
+            constructor(x, y, data, id, orbitCenter, layer) {
                 this.x = x;
                 this.y = y;
                 this.data = data;
                 this.id = id;
-                this.vx = (Math.random() - 0.5) * 0.3;
-                this.vy = (Math.random() - 0.5) * 0.3;
+                this.vx = (Math.random() - 0.5) * 1.2;
+                this.vy = (Math.random() - 0.5) * 1.2;
                 this.hovered = false;
                 this.isInteractive = data.category === "interactive";
+                this.layer = layer; // Depth layer for visual effect
                 this.orbitCenter = orbitCenter;
-                this.orbitRadius = this.isInteractive ? 200 : 80 + Math.random() * 220;
+                
+                // Much larger orbit radius with variation
+                this.orbitRadius = this.isInteractive ? 
+                    280 + Math.random() * 80 : 
+                    150 + Math.random() * 300;
+                
                 this.orbitAngle = Math.atan2(y - orbitCenter.y, x - orbitCenter.x);
-                this.orbitSpeed = (Math.random() - 0.5) * 0.0005;
+                // More varied and visible orbit speeds
+                this.orbitSpeed = (Math.random() - 0.5) * 0.003 + (this.isInteractive ? 0.001 : 0.0005);
+                
+                // Add some wobble for organic movement
+                this.wobbleOffset = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = 0.001 + Math.random() * 0.002;
+                this.wobbleAmount = 15 + Math.random() * 25;
+                
                 this.connected = [];
+                
+                // Add magnetic attraction properties
+                this.attractionStrength = 0.00015;
+                this.repulsionStrength = 0.5;
+                this.minDistance = 60;
             }
 
             update() {
-                // Gentle orbital movement
+                // Orbital movement with wobble
                 this.orbitAngle += this.orbitSpeed;
-                const targetX = this.orbitCenter.x + Math.cos(this.orbitAngle) * this.orbitRadius;
-                const targetY = this.orbitCenter.y + Math.sin(this.orbitAngle) * this.orbitRadius;
+                this.wobbleOffset += this.wobbleSpeed;
+                
+                const wobbleX = Math.cos(this.wobbleOffset) * this.wobbleAmount;
+                const wobbleY = Math.sin(this.wobbleOffset * 1.3) * this.wobbleAmount;
+                
+                const targetX = this.orbitCenter.x + 
+                    Math.cos(this.orbitAngle) * this.orbitRadius + wobbleX;
+                const targetY = this.orbitCenter.y + 
+                    Math.sin(this.orbitAngle) * this.orbitRadius + wobbleY;
 
-                // Smoothly move toward orbit position
-                this.vx += (targetX - this.x) * 0.002;
-                this.vy += (targetY - this.y) * 0.002;
+                // Stronger pull toward target
+                this.vx += (targetX - this.x) * 0.008;
+                this.vy += (targetY - this.y) * 0.008;
 
-                // Apply velocity with damping
-                this.vx *= 0.95;
-                this.vy *= 0.95;
+                // Magnetic interactions with other nodes
+                nodes.forEach(other => {
+                    if (other !== this) {
+                        const dx = other.x - this.x;
+                        const dy = other.y - this.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // Repulsion when too close
+                        if (distance < this.minDistance && distance > 0) {
+                            const force = (this.minDistance - distance) * this.repulsionStrength;
+                            this.vx -= (dx / distance) * force;
+                            this.vy -= (dy / distance) * force;
+                        }
+                        // Gentle attraction at medium distances
+                        else if (distance < 250 && distance > this.minDistance) {
+                            const force = this.attractionStrength;
+                            this.vx += (dx / distance) * force * distance * 0.1;
+                            this.vy += (dy / distance) * force * distance * 0.1;
+                        }
+                    }
+                });
+
+                // Apply velocity with less damping for more movement
+                this.vx *= 0.92;
+                this.vy *= 0.92;
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Keep within canvas bounds with soft bounce
-                const margin = 30;
-                if (this.x < margin || this.x > canvas.width - margin) {
-                    this.vx *= -0.5;
-                    this.x = Math.max(margin, Math.min(canvas.width - margin, this.x));
+                // Soft boundary bounce
+                const margin = 50;
+                if (this.x < margin) {
+                    this.vx += (margin - this.x) * 0.05;
+                } else if (this.x > canvas.width - margin) {
+                    this.vx -= (this.x - (canvas.width - margin)) * 0.05;
                 }
-                if (this.y < margin || this.y > canvas.height - margin) {
-                    this.vy *= -0.5;
-                    this.y = Math.max(margin, Math.min(canvas.height - margin, this.y));
+                if (this.y < margin) {
+                    this.vy += (margin - this.y) * 0.05;
+                } else if (this.y > canvas.height - margin) {
+                    this.vy -= (this.y - (canvas.height - margin)) * 0.05;
                 }
             }
 
             draw() {
                 if (!this.isInteractive) return;
 
-                const baseRadius = 8;
-                const hoverRadius = 14;
+                // Larger base sizes
+                const baseRadius = 12 + this.layer * 2;
+                const hoverRadius = 22 + this.layer * 2;
                 const radius = this.hovered ? hoverRadius : baseRadius;
                 
-                // Draw node
+                // Layer-based opacity for depth
+                const layerOpacity = 0.7 + (this.layer * 0.1);
+                
+                // Draw node with depth shadow
+                ctx.save();
+                
+                // Depth shadow
+                if (!this.hovered) {
+                    ctx.shadowBlur = 10 + this.layer * 5;
+                    ctx.shadowColor = `rgba(39, 56, 109, ${0.3 * layerOpacity})`;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                }
+                
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
                 
@@ -171,27 +246,57 @@
                     // Gradient for hovered state
                     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, hoverRadius);
                     gradient.addColorStop(0, 'rgba(39, 56, 109, 1)');
-                    gradient.addColorStop(1, 'rgba(39, 56, 109, 0.6)');
+                    gradient.addColorStop(0.6, 'rgba(39, 56, 109, 0.8)');
+                    gradient.addColorStop(1, 'rgba(39, 56, 109, 0.3)');
                     ctx.fillStyle = gradient;
                     
-                    // Outer glow ring
-                    ctx.shadowBlur = 20;
-                    ctx.shadowColor = 'rgba(39, 56, 109, 0.5)';
+                    // Stronger glow for hover
+                    ctx.shadowBlur = 30;
+                    ctx.shadowColor = 'rgba(39, 56, 109, 0.8)';
                 } else {
-                    ctx.fillStyle = 'rgba(39, 56, 109, 0.8)';
-                    ctx.shadowBlur = 0;
+                    // Layer-based gradient
+                    const gradient = ctx.createRadialGradient(
+                        this.x - radius * 0.3, 
+                        this.y - radius * 0.3, 
+                        0, 
+                        this.x, 
+                        this.y, 
+                        radius
+                    );
+                    gradient.addColorStop(0, `rgba(39, 56, 109, ${layerOpacity})`);
+                    gradient.addColorStop(1, `rgba(39, 56, 109, ${layerOpacity * 0.6})`);
+                    ctx.fillStyle = gradient;
                 }
                 
                 ctx.fill();
-                ctx.shadowBlur = 0;
+                
+                // Inner highlight for depth
+                if (!this.hovered) {
+                    ctx.shadowBlur = 0;
+                    ctx.beginPath();
+                    ctx.arc(this.x - radius * 0.3, this.y - radius * 0.3, radius * 0.4, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${0.15 * layerOpacity})`;
+                    ctx.fill();
+                }
+                
+                ctx.restore();
 
-                // Pulse effect for hovered node
+                // Animated pulse ring for hovered node
                 if (this.hovered) {
-                    const pulseRadius = hoverRadius + 8 + Math.sin(Date.now() / 300) * 4;
+                    const time = Date.now() / 400;
+                    const pulseRadius = hoverRadius + 10 + Math.sin(time) * 6;
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, pulseRadius, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(39, 56, 109, 0.3)';
-                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = `rgba(39, 56, 109, ${0.4 + Math.sin(time) * 0.2})`;
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+                    
+                    // Secondary pulse
+                    const pulseRadius2 = hoverRadius + 18 + Math.sin(time + 1) * 4;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, pulseRadius2, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(39, 56, 109, ${0.2 + Math.sin(time + 1) * 0.1})`;
+                    ctx.lineWidth = 1.5;
                     ctx.stroke();
                 }
             }
@@ -201,7 +306,7 @@
                 const dx = mx - this.x;
                 const dy = my - this.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                return distance < 14;
+                return distance < 22;
             }
         }
 
@@ -211,24 +316,32 @@
         const centerY = canvas.height / 2;
         const orbitCenter = { x: centerX, y: centerY };
 
-        // Create interactive data nodes
+        // Create interactive data nodes in multiple layers with better spacing
         dataPoints.forEach((data, index) => {
             const angle = (index / dataPoints.length) * Math.PI * 2;
-            const radius = 200;
+            // Layer assignment (0, 1, or 2) for depth
+            const layer = index % 3;
+            // Varied radius based on layer
+            const baseRadius = 280 + (layer * 40);
+            const radiusVariation = (Math.random() - 0.5) * 60;
+            const radius = baseRadius + radiusVariation;
+            
             const x = centerX + Math.cos(angle) * radius;
             const y = centerY + Math.sin(angle) * radius;
             
-            nodes.push(new Node(x, y, data, index, orbitCenter));
+            nodes.push(new Node(x, y, data, index, orbitCenter, layer));
         });
 
-        // Create helper nodes for network density
+        // Create helper nodes with better distribution
         helperNodes.forEach((data, index) => {
             const angle = Math.random() * Math.PI * 2;
-            const radius = 80 + Math.random() * 220;
+            const layer = Math.floor(Math.random() * 3);
+            // More varied radius for depth
+            const radius = 150 + Math.random() * 350;
             const x = centerX + Math.cos(angle) * radius;
             const y = centerY + Math.sin(angle) * radius;
             
-            nodes.push(new Node(x, y, data, index + dataPoints.length, orbitCenter));
+            nodes.push(new Node(x, y, data, index + dataPoints.length, orbitCenter, layer));
         });
 
         // Mouse tracking
@@ -293,7 +406,8 @@
 
         // Build connection graph after nodes are created
         function buildConnections() {
-            const maxDistance = 220;
+            // Larger max distance for more spread out network
+            const maxDistance = 280;
             
             nodes.forEach(node => {
                 node.connected = [];
@@ -305,7 +419,8 @@
                     const dy = nodes[j].y - nodes[i].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distance < maxDistance) {
+                    // Only connect if within range and not too many connections
+                    if (distance < maxDistance && nodes[i].connected.length < 6 && nodes[j].connected.length < 6) {
                         nodes[i].connected.push(nodes[j]);
                         nodes[j].connected.push(nodes[i]);
                     }
@@ -323,26 +438,30 @@
                         const dy = connectedNode.y - node.y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        // Base opacity based on distance
-                        let opacity = (1 - distance / 220) * 0.25;
-                        let lineWidth = 1;
+                        // Layer-based depth effect
+                        const avgLayer = (node.layer + connectedNode.layer) / 2;
+                        const depthOpacity = 0.6 + (avgLayer * 0.15);
+                        
+                        // Base opacity based on distance with depth
+                        let opacity = (1 - distance / 280) * 0.2 * depthOpacity;
+                        let lineWidth = 0.8 + (avgLayer * 0.3);
                         
                         // Highlight connections involving hovered nodes
                         if (node.hovered || connectedNode.hovered) {
-                            opacity = (1 - distance / 220) * 0.7;
-                            lineWidth = 2.5;
+                            opacity = (1 - distance / 280) * 0.85;
+                            lineWidth = 3 + (avgLayer * 0.5);
                         }
                         // Highlight connections between interactive nodes
                         else if (node.isInteractive && connectedNode.isInteractive) {
-                            opacity = (1 - distance / 220) * 0.35;
-                            lineWidth = 1.5;
+                            opacity = (1 - distance / 280) * 0.35 * depthOpacity;
+                            lineWidth = 1.5 + (avgLayer * 0.3);
                         }
 
                         ctx.beginPath();
                         ctx.moveTo(node.x, node.y);
                         ctx.lineTo(connectedNode.x, connectedNode.y);
                         
-                        // Color: #27386d for hovered, dark gray otherwise
+                        // Color with depth variation
                         const color = (node.hovered || connectedNode.hovered) ? 
                             '39, 56, 109' : '52, 73, 94';
                         ctx.strokeStyle = `rgba(${color}, ${opacity})`;
@@ -351,16 +470,26 @@
 
                         // Draw data flow particles on hovered connections
                         if (node.hovered || connectedNode.hovered) {
-                            const particleCount = 2;
+                            const particleCount = 3;
                             for (let p = 0; p < particleCount; p++) {
-                                const progress = ((Date.now() / 1500 + p / particleCount) % 1);
+                                const progress = ((Date.now() / 1200 + p / particleCount) % 1);
                                 const px = node.x + dx * progress;
                                 const py = node.y + dy * progress;
                                 
+                                // Particle size based on depth
+                                const particleSize = 3 + avgLayer * 0.5;
+                                
                                 ctx.beginPath();
-                                ctx.arc(px, py, 2.5, 0, Math.PI * 2);
-                                ctx.fillStyle = `rgba(39, 56, 109, ${0.8 * (1 - Math.abs(progress - 0.5) * 2)})`;
+                                ctx.arc(px, py, particleSize, 0, Math.PI * 2);
+                                const particleOpacity = 0.9 * (1 - Math.abs(progress - 0.5) * 1.5);
+                                ctx.fillStyle = `rgba(39, 56, 109, ${particleOpacity})`;
                                 ctx.fill();
+                                
+                                // Particle glow
+                                ctx.shadowBlur = 8;
+                                ctx.shadowColor = 'rgba(39, 56, 109, 0.5)';
+                                ctx.fill();
+                                ctx.shadowBlur = 0;
                             }
                         }
                     }
@@ -376,9 +505,12 @@
 
         // Animation loop
         function animate() {
+            // Get container dimensions for drawing
+            const rect = container.getBoundingClientRect();
+            
             // Clear with white background
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, rect.width, rect.height);
 
             // Draw connections first (behind nodes)
             drawConnections();
@@ -425,13 +557,27 @@
 
         // Canvas responsiveness
         window.addEventListener('resize', () => {
+            const oldWidth = canvas.width;
+            const oldHeight = canvas.height;
+            
             resizeCanvas();
+            
             // Update orbit center on resize
-            const newCenterX = canvas.width / 2;
-            const newCenterY = canvas.height / 2;
+            const rect = container.getBoundingClientRect();
+            const newCenterX = rect.width / 2;
+            const newCenterY = rect.height / 2;
+            
+            // Scale node positions proportionally
+            const scaleX = rect.width / (oldWidth / (window.devicePixelRatio || 1));
+            const scaleY = rect.height / (oldHeight / (window.devicePixelRatio || 1));
+            
             nodes.forEach(node => {
+                node.x *= scaleX;
+                node.y *= scaleY;
                 node.orbitCenter = { x: newCenterX, y: newCenterY };
             });
+            
+            buildConnections();
         });
     }
 })();
