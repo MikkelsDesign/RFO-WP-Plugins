@@ -142,38 +142,27 @@
                 this.orbitRadius = Math.sqrt(dx * dx + dy * dy);
                 
                 this.orbitAngle = Math.atan2(y - orbitCenter.y, x - orbitCenter.x);
-                // More varied and visible orbit speeds
-                this.orbitSpeed = (Math.random() - 0.5) * 0.0015 + (this.isInteractive ? 0.0008 : 0.0004);
-                
-                // Add some wobble for organic movement (reduced)
-                this.wobbleOffset = Math.random() * Math.PI * 2;
-                this.wobbleSpeed = 0.0008 + Math.random() * 0.001;
-                this.wobbleAmount = 8 + Math.random() * 12;
+                // Clean, precise orbital speeds - no organic wobble
+                this.orbitSpeed = (Math.random() - 0.5) * 0.001 + (this.isInteractive ? 0.0005 : 0.0003);
                 
                 this.connected = [];
                 
-                // Add magnetic attraction properties (reduced)
-                this.attractionStrength = 0.0001;
-                this.repulsionStrength = 0.3;
-                this.minDistance = 60;
+                // Strong magnetic attraction properties for tech movement
+                this.attractionStrength = 0.0003;
+                this.repulsionStrength = 0.5;
+                this.minDistance = 80;
             }
 
             update() {
-                // Orbital movement with wobble
+                // Clean orbital movement - magnetic and precise
                 this.orbitAngle += this.orbitSpeed;
-                this.wobbleOffset += this.wobbleSpeed;
                 
-                const wobbleX = Math.cos(this.wobbleOffset) * this.wobbleAmount;
-                const wobbleY = Math.sin(this.wobbleOffset * 1.3) * this.wobbleAmount;
-                
-                const targetX = this.orbitCenter.x + 
-                    Math.cos(this.orbitAngle) * this.orbitRadius + wobbleX;
-                const targetY = this.orbitCenter.y + 
-                    Math.sin(this.orbitAngle) * this.orbitRadius + wobbleY;
+                const targetX = this.orbitCenter.x + Math.cos(this.orbitAngle) * this.orbitRadius;
+                const targetY = this.orbitCenter.y + Math.sin(this.orbitAngle) * this.orbitRadius;
 
-                // Stronger pull toward target
-                this.vx += (targetX - this.x) * 0.008;
-                this.vy += (targetY - this.y) * 0.008;
+                // Smooth pull toward target position
+                this.vx += (targetX - this.x) * 0.01;
+                this.vy += (targetY - this.y) * 0.01;
 
                 // Magnetic interactions with other nodes
                 nodes.forEach(other => {
@@ -423,8 +412,8 @@
 
         // Build connection graph after nodes are created
         function buildConnections() {
-            // Larger max distance for more spread out network
-            const maxDistance = 280;
+            // MUCH larger max distance for dense, visible web
+            const maxDistance = 350; // Increased from 280
             
             nodes.forEach(node => {
                 node.connected = [];
@@ -436,8 +425,8 @@
                     const dy = nodes[j].y - nodes[i].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    // Only connect if within range and not too many connections
-                    if (distance < maxDistance && nodes[i].connected.length < 6 && nodes[j].connected.length < 6) {
+                    // Allow MORE connections per node for denser web
+                    if (distance < maxDistance && nodes[i].connected.length < 8 && nodes[j].connected.length < 8) {
                         nodes[i].connected.push(nodes[j]);
                         nodes[j].connected.push(nodes[i]);
                     }
@@ -445,7 +434,7 @@
             }
         }
 
-        // Draw visible connection network
+        // Draw visible connection network - ENHANCED for clarity and layering
         function drawConnections() {
             nodes.forEach(node => {
                 node.connected.forEach(connectedNode => {
@@ -455,35 +444,41 @@
                         const dy = connectedNode.y - node.y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        // Layer-based depth effect
+                        // Layer-based depth effect - MORE PRONOUNCED
                         const avgLayer = (node.layer + connectedNode.layer) / 2;
-                        const depthOpacity = 0.6 + (avgLayer * 0.15);
+                        const depthOpacity = 0.4 + (avgLayer * 0.3); // Increased base and multiplier
                         
-                        // Base opacity based on distance with depth
-                        let opacity = (1 - distance / 280) * 0.2 * depthOpacity;
-                        let lineWidth = 0.8 + (avgLayer * 0.3);
+                        // Base opacity - MUCH MORE VISIBLE (using 350 as new max distance)
+                        let opacity = (1 - distance / 350) * 0.45 * depthOpacity; // Updated distance
+                        let lineWidth = 2 + (avgLayer * 0.8); // Thicker lines
                         
                         // Highlight connections involving hovered nodes
                         if (node.hovered || connectedNode.hovered) {
-                            opacity = (1 - distance / 280) * 0.85;
-                            lineWidth = 3 + (avgLayer * 0.5);
+                            opacity = (1 - distance / 350) * 0.95;
+                            lineWidth = 4 + (avgLayer * 1);
                         }
-                        // Highlight connections between interactive nodes
+                        // Highlight connections between interactive nodes - MORE VISIBLE
                         else if (node.isInteractive && connectedNode.isInteractive) {
-                            opacity = (1 - distance / 280) * 0.35 * depthOpacity;
-                            lineWidth = 1.5 + (avgLayer * 0.3);
+                            opacity = (1 - distance / 350) * 0.6 * depthOpacity; // Updated distance
+                            lineWidth = 2.5 + (avgLayer * 0.6);
                         }
 
+                        // Draw connection with glow for depth
                         ctx.beginPath();
                         ctx.moveTo(node.x, node.y);
                         ctx.lineTo(connectedNode.x, connectedNode.y);
                         
-                        // Color with depth variation
+                        // Color with depth variation - darker/more saturated
                         const color = (node.hovered || connectedNode.hovered) ? 
-                            '39, 56, 109' : '52, 73, 94';
+                            '30, 50, 100' : '40, 60, 85';
                         ctx.strokeStyle = `rgba(${color}, ${opacity})`;
                         ctx.lineWidth = lineWidth;
+                        
+                        // Add glow for web effect
+                        ctx.shadowBlur = 3 + avgLayer * 2;
+                        ctx.shadowColor = `rgba(${color}, ${opacity * 0.5})`;
                         ctx.stroke();
+                        ctx.shadowBlur = 0;
 
                         // Draw data flow particles on hovered connections
                         if (node.hovered || connectedNode.hovered) {
@@ -499,12 +494,12 @@
                                 ctx.beginPath();
                                 ctx.arc(px, py, particleSize, 0, Math.PI * 2);
                                 const particleOpacity = 0.9 * (1 - Math.abs(progress - 0.5) * 1.5);
-                                ctx.fillStyle = `rgba(39, 56, 109, ${particleOpacity})`;
+                                ctx.fillStyle = `rgba(30, 50, 100, ${particleOpacity})`;
                                 ctx.fill();
                                 
                                 // Particle glow
                                 ctx.shadowBlur = 8;
-                                ctx.shadowColor = 'rgba(39, 56, 109, 0.5)';
+                                ctx.shadowColor = 'rgba(30, 50, 100, 0.5)';
                                 ctx.fill();
                                 ctx.shadowBlur = 0;
                             }
