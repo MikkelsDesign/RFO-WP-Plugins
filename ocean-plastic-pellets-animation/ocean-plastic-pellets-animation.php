@@ -69,7 +69,7 @@ class OceanPlasticPelletsAnimation {
     public function render_animation($atts) {
         // Parse shortcode attributes
         $atts = shortcode_atts(array(
-            'height' => '100vh',
+            'height' => '500px',
         ), $atts, 'ocean_plastic_animation');
         
         ob_start();
