@@ -3,8 +3,8 @@
  * Plugin Name: Phone Hover Animation
  * Plugin URI: https://yoursite.com
  * Description: Animated phone that rises on hover to reveal text below
- * Version: 1.0.0
- * Author: Your Name
+ * Version: 1.1.0
+ * Author: Celinamedia
  * Author URI: https://yoursite.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
