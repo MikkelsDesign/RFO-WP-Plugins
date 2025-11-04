@@ -27,6 +27,16 @@
     min-height: 400px;
 }
 
+/* Gradient fade below the ocean */
+.ocean-plastic-wrapper::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(to bottom, #5db8d1 0%, #8dcee0 30%, #c4e8f0 60%, #ffffff 100%);
+    pointer-events: none;
+}
+
 /* Ocean Wave */
 .ocean-wave {
     position: absolute;

@@ -81,8 +81,8 @@ class OceanPlasticPelletsAnimation {
                     <svg class="ocean-wave" viewBox="0 0 1000 400" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color: #7dd3e8; stop-opacity: 0.8;" />
-                                <stop offset="100%" style="stop-color: #4a9ab8; stop-opacity: 0.9;" />
+                                <stop offset="0%" style="stop-color: #7dd3e8; stop-opacity: 1;" />
+                                <stop offset="100%" style="stop-color: #5db8d1; stop-opacity: 1;" />
                             </linearGradient>
                         </defs>
                         <path class="wave-path" fill="url(#oceanGradient)" d="M0,150 Q250,120 500,150 T1000,150 L1000,400 L0,400 Z" />
@@ -97,7 +97,7 @@ class OceanPlasticPelletsAnimation {
                             <div class="fact-box">
                                 <h3 class="fact-box-title">The Pellet Problem</h3>
                                 <p class="fact-box-text">
-                                    Between 52,000 and 184,000 tonnes of plastic pellets are released into the environment each year due to mishandling throughout the entire supply chain.
+                                    Between 52,000 and 184,000 tonnes of plastic pellets are released into the environment each year due to mishandling throughout the entire supply chain. These tiny particles represent the third-largest source of microplastic pollution in the oceans. 
                                 </p>
                                 <p class="fact-box-source">
                                     Source: EU Commission, October 2023
