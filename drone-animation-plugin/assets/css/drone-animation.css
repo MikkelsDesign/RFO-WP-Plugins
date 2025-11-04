@@ -6,6 +6,9 @@
     height: 600px;
     overflow: hidden;
     background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #droneAnimationCanvas {
@@ -17,11 +20,9 @@
 }
 
 #droneAnimationImage {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     width: 500px;
+    max-width: 80vw;
     height: auto;
     z-index: 10;
     pointer-events: none;
@@ -30,20 +31,22 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .drone-animation-container {
-        height: 400px;
+        height: 450px;
     }
     
     #droneAnimationImage {
-        width: 300px;
+        width: 400px;
+        max-width: 85vw;
     }
 }
 
 @media (max-width: 480px) {
     .drone-animation-container {
-        height: 300px;
+        height: 350px;
     }
     
     #droneAnimationImage {
-        width: 200px;
+        width: 300px;
+        max-width: 90vw;
     }
 }

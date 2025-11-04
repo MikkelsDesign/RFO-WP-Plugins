@@ -10,21 +10,60 @@
     
     function initDroneAnimation() {
         const canvas = document.getElementById('droneAnimationCanvas');
-        if (!canvas) return;
+        const droneImage = document.getElementById('droneAnimationImage');
+        if (!canvas || !droneImage) return;
         
         const ctx = canvas.getContext('2d');
         const container = canvas.parentElement;
         
-        // Set canvas size
+        let centerX, centerY;
+        let isInitialized = false;
+        
+        // Calculate the actual center point based on drone image position
+        function updateCenterPoint() {
+            const rect = droneImage.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            // Calculate center of drone image relative to canvas
+            centerX = rect.left - canvasRect.left + rect.width / 2;
+            centerY = rect.top - canvasRect.top + rect.height / 2;
+        }
+        
+        // Set canvas size and update center point based on drone image position
         function resizeCanvas() {
             canvas.width = container.offsetWidth;
             canvas.height = container.offsetHeight;
+            updateCenterPoint();
+            
+            // Initialize animation after first calculation
+            if (!isInitialized) {
+                isInitialized = true;
+                initializeAnimation();
+            }
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
         
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        // Wait for image to load before initializing
+        if (droneImage.complete) {
+            resizeCanvas();
+        } else {
+            droneImage.addEventListener('load', resizeCanvas);
+        }
+        
+        window.addEventListener('resize', function() {
+            resizeCanvas();
+            // Reset particles on resize
+            if (isInitialized) {
+                clearTimeout(window.droneResizeTimeout);
+                window.droneResizeTimeout = setTimeout(function() {
+                    icons.forEach(function(icon) {
+                        icon.reset();
+                    });
+                    polaroids.forEach(function(polaroid) {
+                        polaroid.reset();
+                    });
+                }, 100);
+            }
+        });
         
         // Floating data icons/symbols
         class DataIcon {
@@ -37,6 +76,10 @@
             }
             
             reset() {
+                // Get current center point
+                const currentCenterX = centerX;
+                const currentCenterY = centerY;
+                
                 // 90-degree cone from directly above
                 const coneAngle = Math.PI / 4;
                 const angle = (Math.random() - 0.5) * coneAngle * 2;
@@ -45,14 +88,14 @@
                 const horizontalOffset = Math.tan(angle) * distance;
                 const rotationAngle = Math.random() * Math.PI * 2;
                 
-                this.startX = centerX + Math.cos(rotationAngle) * horizontalOffset;
-                this.startY = centerY - distance;
+                this.startX = currentCenterX + Math.cos(rotationAngle) * horizontalOffset;
+                this.startY = currentCenterY - distance;
                 this.x = this.startX;
                 this.y = this.startY;
                 
                 // Stop 40px higher than center
-                this.targetX = centerX + (Math.random() - 0.5) * 80;
-                this.targetY = centerY - 40 + (Math.random() - 0.5) * 40;
+                this.targetX = currentCenterX + (Math.random() - 0.5) * 80;
+                this.targetY = currentCenterY - 40 + (Math.random() - 0.5) * 40;
                 
                 this.speed = Math.random() * 0.4 + 0.2;
                 this.size = Math.random() * 10 + 12;
@@ -119,6 +162,10 @@
             }
             
             reset() {
+                // Get current center point
+                const currentCenterX = centerX;
+                const currentCenterY = centerY;
+                
                 // 90-degree cone from directly above
                 const coneAngle = Math.PI / 4;
                 const angle = (Math.random() - 0.5) * coneAngle * 2;
@@ -127,14 +174,14 @@
                 const horizontalOffset = Math.tan(angle) * distance;
                 const rotationAngle = Math.random() * Math.PI * 2;
                 
-                this.startX = centerX + Math.cos(rotationAngle) * horizontalOffset;
-                this.startY = centerY - distance;
+                this.startX = currentCenterX + Math.cos(rotationAngle) * horizontalOffset;
+                this.startY = currentCenterY - distance;
                 this.x = this.startX;
                 this.y = this.startY;
                 
                 // Stop 40px higher than center
-                this.targetX = centerX + (Math.random() - 0.5) * 100;
-                this.targetY = centerY - 40 + (Math.random() - 0.5) * 50;
+                this.targetX = currentCenterX + (Math.random() - 0.5) * 100;
+                this.targetY = currentCenterY - 40 + (Math.random() - 0.5) * 50;
                 
                 this.speed = Math.random() * 0.3 + 0.15;
                 this.width = Math.random() * 10 + 15;
@@ -227,16 +274,24 @@
             }
         }
         
-        // Create icons
-        const icons = [];
-        for (let i = 0; i < 50; i++) {
-            icons.push(new DataIcon());
-        }
+        // Icons and polaroids arrays
+        let icons = [];
+        let polaroids = [];
         
-        // Create polaroids
-        const polaroids = [];
-        for (let i = 0; i < 15; i++) {
-            polaroids.push(new Polaroid());
+        // Initialize animation after center point is calculated
+        function initializeAnimation() {
+            // Create icons
+            for (let i = 0; i < 50; i++) {
+                icons.push(new DataIcon());
+            }
+            
+            // Create polaroids
+            for (let i = 0; i < 15; i++) {
+                polaroids.push(new Polaroid());
+            }
+            
+            // Start animation loop
+            animate();
         }
         
         // Animation loop
@@ -257,7 +312,5 @@
             
             requestAnimationFrame(animate);
         }
-        
-        animate();
     }
 })();
