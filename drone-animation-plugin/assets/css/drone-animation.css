@@ -1,5 +1,4 @@
-/* Drone Animation Plugin Styles */
-
+/* Hovedcontainer der holder både canvas og drone billede */
 .drone-animation-container {
     position: relative;
     width: 100%;
@@ -11,6 +10,7 @@
     justify-content: center;
 }
 
+/* Canvas hvor datastrømmene tegnes */
 #droneAnimationCanvas {
     position: absolute;
     top: 0;
@@ -19,6 +19,7 @@
     height: 100%;
 }
 
+/* Drone billedet der ligger oven på canvas */
 #droneAnimationImage {
     position: relative;
     width: 500px;
@@ -28,7 +29,7 @@
     pointer-events: none;
 }
 
-/* Responsive adjustments */
+/* Tilpasninger til tablets */
 @media (max-width: 768px) {
     .drone-animation-container {
         height: 450px;
@@ -40,6 +41,7 @@
     }
 }
 
+/* Tilpasninger til mobiler */
 @media (max-width: 480px) {
     .drone-animation-container {
         height: 350px;
