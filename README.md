@@ -38,7 +38,7 @@ define('DRONE_ANIMATION_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DRONE_ANIMATION_PLUGIN_URL', plugin_dir_url(__FILE__));
 ```
 
-Definerer versionsnummer og stier til plugin-filer som variabler. 
+Definerer versionsnummer og stier til plugin-filer som konstanter. 
 
 ### Stylesheet og javascript Enqueue
 
