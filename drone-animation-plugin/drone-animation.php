@@ -3,7 +3,7 @@
  * Plugin Name: Drone Data Animation
  * Plugin URI: https://rfo.mikkelsdesign.dk
  * Description: Animeret strøm af data der flyder ind i en drone illustration
- * Version: 1.3.1
+ * Version: 1.3.2
  * Author: Mikkel Andersen
  * Author URI: https://mikkelsdesign.dk
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definerer konstanter som bruges gennem hele plugin'et
-define('DRONE_ANIMATION_VERSION', '1.3.1');
+define('DRONE_ANIMATION_VERSION', '1.3.2');
 define('DRONE_ANIMATION_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DRONE_ANIMATION_PLUGIN_URL', plugin_dir_url(__FILE__));
 

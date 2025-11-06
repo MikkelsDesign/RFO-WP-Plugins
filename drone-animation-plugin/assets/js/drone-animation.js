@@ -263,13 +263,13 @@
         
         // Laver 50 data-ikoner med det samme
         const icons = [];
-        for (let i = 0; i < 85; i++) {
+        for (let i = 0; i < 30; i++) {
             icons.push(new DataIcon());
         }
         
         // Laver 15 polaroids med det samme
         const polaroids = [];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 15; i++) {
             polaroids.push(new Polaroid());
         }
         
