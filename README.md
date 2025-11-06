@@ -5,6 +5,8 @@
 
 Plugin'et viser en animeret datastrøm der flyder ned i en drone-illustration via canvas animation. Data-elementer (bogstaver, tal og polaroid-rammer) falder fra toppen i en 90-graders kegle og forsvinder gradvist når de når dronen.
 
+![Skærmoptagelse 2025-11-06 kl  09 10 22](https://github.com/user-attachments/assets/c9d3233c-2244-4b3a-b2dc-221c784fc369)
+
 ---
 
 ## Hover Effekt & Animation Koncept
