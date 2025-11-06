@@ -22,7 +22,7 @@
 /* Drone billedet der ligger oven på canvas */
 #droneAnimationImage {
     position: relative;
-    width: 500px;
+    width: 600px;
     max-width: 80vw;
     height: auto;
     z-index: 10;
