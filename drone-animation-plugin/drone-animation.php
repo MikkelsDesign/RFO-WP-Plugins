@@ -3,7 +3,7 @@
  * Plugin Name: Drone Data Animation
  * Plugin URI: https://rfo.mikkelsdesign.dk
  * Description: Animeret strøm af data der flyder ind i en drone illustration
- * Version: 1.2.1
+ * Version: 1.3.0
  * Author: Mikkel Andersen
  * Author URI: https://mikkelsdesign.dk
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definerer konstanter som bruges gennem hele plugin'et
-define('DRONE_ANIMATION_VERSION', '1.0.0');
+define('DRONE_ANIMATION_VERSION', '1.3.0');
 define('DRONE_ANIMATION_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DRONE_ANIMATION_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -55,7 +55,7 @@ function drone_animation_shortcode($atts) {
     $atts = shortcode_atts(array(
         'width' => '100%',
         'height' => '600px',
-    ), $atts, 'drone_animation');
+    ), $atts, 'drone_animation'); 
     
     // Starter output buffering så vi kan returnere HTML som tekst
     ob_start();
@@ -63,7 +63,7 @@ function drone_animation_shortcode($atts) {
     
     <div class="drone-animation-container" style="width: <?php echo esc_attr($atts['width']); ?>; height: <?php echo esc_attr($atts['height']); ?>;">
         <canvas id="droneAnimationCanvas"></canvas>
-        <img id="droneAnimationImage" src="<?php echo esc_url(DRONE_ANIMATION_PLUGIN_URL . 'assets/images/doneillustrationstor.png'); ?>" alt="Drone">
+        <img id="droneAnimationImage" src="<?php echo esc_url(DRONE_ANIMATION_PLUGIN_URL . 'assets/images/droneillustrationer.png'); ?>" alt="Drone">
     </div>
     
     <?php
