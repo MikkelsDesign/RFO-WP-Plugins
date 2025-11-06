@@ -278,14 +278,6 @@ function animate() {
 
 ## Performance Optimering
 
-### Staggered Reset (Undgå Hiccups)
-
-```javascript
-this.resetDelay = Math.random() * 2000; // 0-2 sekunder forsinkelse
-```
-
-Elementer resetter forskudt i tid, så der ikke er pludselige "batch resets".
-
 ### Particle Count
 
 - **50 Data Icons**: Bogstaver og tal
