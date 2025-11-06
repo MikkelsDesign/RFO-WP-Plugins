@@ -343,6 +343,6 @@ drone-animation-plugin/
 
 ## AI Note
 
-AI har været brugt som sparringspartner igennem udviklingen af dette plugin. Jeg har anvendt AI til at strukturere koden, få hjælp til matematiske beregninger (trigonometri for kegle-effekt), validere løsningsmuligheder og til at få tekniske forslag til canvas-optimering. Designbeslutninger, koncept, visuel retning, fade-algoritmer og den endelige kodeimplementering er udført, vurderet og manuelt tilpasset af mig selv. AI har derfor fungeret som et støtteværktøj og ikke som en automatisk generator af løsningen.
-
+AI er blevet anvendt som sparringspartner og teknisk rådgiver gennem udviklingen af dette plugin. Jeg har brugt AI til at få assistance med kodestrukturering, matematiske beregninger (især trigonometri til 90-graders kegle-effekten), validering af forskellige løsningstilgange samt tekniske forslag til canvas-optimering og performance-forbedringer.
+Alle overordnede designbeslutninger, det visuelle koncept, animation-retning, fade-algoritmer og den endelige kodeimplementering er udviklet, evalueret og håndkodet af mig selv. AI har fungeret som et understøttende værktøj i processen, men har ikke automatisk genereret løsningen eller taget kreative beslutninger på mine vegne.
 ---
