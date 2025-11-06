@@ -1,30 +1,28 @@
 <?php
 /**
  * Plugin Name: Drone Data Animation
- * Plugin URI: https://yoursite.com
- * Description: Animated data stream flowing into a drone illustration
- * Version: 1.0.0
- * Author: Your Name
- * Author URI: https://yoursite.com
+ * Plugin URI: https://rfo.mikkelsdesign.dk
+ * Description: Animeret strøm af data der flyder ind i en drone illustration
+ * Version: 1.2.1
+ * Author: Mikkel Andersen
+ * Author URI: https://mikkelsdesign.dk
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
-// Exit if accessed directly
+// Sikrer at filen kun kan tilgås gennem WordPress, ikke direkte
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Define plugin constants
+// Definerer konstanter som bruges gennem hele plugin'et
 define('DRONE_ANIMATION_VERSION', '1.0.0');
 define('DRONE_ANIMATION_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DRONE_ANIMATION_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-/**
- * Enqueue plugin styles and scripts
- */
+// Indlæser CSS og JavaScript filer når de skal bruges
 function drone_animation_enqueue_assets() {
-    // Only enqueue on pages that have the shortcode
+    // Tjekker om siden bruger drone animationen, så vi kun indlæser filer når det er nødvendigt
     global $post;
     if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'drone_animation')) {
         wp_enqueue_style(
@@ -42,7 +40,7 @@ function drone_animation_enqueue_assets() {
             true
         );
         
-        // Pass plugin URL to JavaScript
+        // Sender plugin URL'en videre til JavaScript, så den kan finde billeder og andre filer
         wp_localize_script('drone-animation-js', 'droneAnimationData', array(
             'pluginUrl' => DRONE_ANIMATION_PLUGIN_URL
         ));
@@ -50,18 +48,16 @@ function drone_animation_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'drone_animation_enqueue_assets');
 
-/**
- * Shortcode to display the drone animation
- * Usage: [drone_animation]
- */
+// Shortcode som viser drone animationen på siden
+// Brug: [drone_animation] i din side eller indlæg
 function drone_animation_shortcode($atts) {
-    // Extract shortcode attributes with defaults
+    // Henter indstillinger fra shortcoden og bruger standardværdier hvis der ikke er angivet noget
     $atts = shortcode_atts(array(
         'width' => '100%',
         'height' => '600px',
     ), $atts, 'drone_animation');
     
-    // Start output buffering
+    // Starter output buffering så vi kan returnere HTML som tekst
     ob_start();
     ?>
     
@@ -74,13 +70,3 @@ function drone_animation_shortcode($atts) {
     return ob_get_clean();
 }
 add_shortcode('drone_animation', 'drone_animation_shortcode');
-
-/**
- * Add settings link on plugin page
- */
-function drone_animation_settings_link($links) {
-    $settings_link = '<a href="options-general.php?page=drone-animation-settings">Settings</a>';
-    array_unshift($links, $settings_link);
-    return $links;
-}
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'drone_animation_settings_link');
