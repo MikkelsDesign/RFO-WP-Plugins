@@ -301,7 +301,7 @@ Fade-in distance er proportionel til hver partikels rejse.
 
 ---
 
-## Shortcode Brug
+## Shortcode anvendelse
 
 ### Basis (standard størrelse)
 
